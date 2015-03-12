@@ -1,5 +1,5 @@
-FROM  sdhibit/rpi-raspbian
-MAINTAINER BEstLibre <github@bestlibre.org>
+FROM resin/rpi-raspbian
+MAINTAINER Nuno Sousa <nunofgs@gmail.com>
 RUN echo "deb http://archive.raspbian.org/raspbian jessie main" >> /etc/apt/sources.list &&\
     apt-get update &&\
     apt-get install -y git mercurial golang nginx &&\
