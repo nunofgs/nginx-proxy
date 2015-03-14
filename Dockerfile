@@ -2,7 +2,7 @@ FROM resin/rpi-raspbian
 MAINTAINER Nuno Sousa <nunofgs@gmail.com>
 RUN echo "deb http://archive.raspbian.org/raspbian jessie main" >> /etc/apt/sources.list &&\
     apt-get update &&\
-    apt-get install -y git mercurial golang nginx &&\
+    apt-get install -y git mercurial golang nginx libgcrypt20-dev &&\
     apt-get clean
 
 RUN echo "daemon off;" >> /etc/nginx/nginx.conf
