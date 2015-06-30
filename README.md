@@ -1,29 +1,37 @@
-This is a modified version of [nginx-proxy][3] docker container to build on a raspberry-pi.
+# Nginx for Raspberry Pi 2
 
-nginx-proxy sets up a container running nginx and [docker-gen][1].  docker-gen generate reverse proxy configs for nginx and reloads nginx when containers they are started and stopped.
+This is a Dockerfile to set up [Nginx](http://nginx.org).
 
-See [Automated Nginx Reverse Proxy for Docker][2] for why you might want to use this.
+This container will run an nginx server with an automatically generated configuration that sets up reverse proxies to other containers.
 
-### Usage
+Dynamically generating configs is possible by exporting the following environment variables:
 
-To run it:
+| Variable     | Description                           |
+|--------------|---------------------------------------|
+| VIRTUAL_HOST | The host to reverse proxy             |
+| VIRTUAL_PORT | The port where the service is running |
 
-    $ docker run -d -p 80:80 -v /var/run/docker.sock:/tmp/docker.sock jwilder/nginx-proxy
+# Usage
 
-Then start any containers you want proxied with an env var VIRTUAL_HOST=subdomain.youdomain.com
+First, boot up the container you intend to reverse proxy. For example, an [rpi-couchpotato](github.com/nunofgs/rpi-couchpotato) container:
 
-    $ docker run -e VIRTUAL_HOST=foo.bar.com  ...
+```shell
+$ docker run \
+  -e "VIRTUAL_HOST=couchpotato.myhost.com"
+  -e "VIRTUAL_PORT=5050"
+  -v /mnt/data:/data
+  nunofgs/rpi-couchpotato
+```
 
-Provided your DNS is setup to forward foo.bar.com to the a host running nginx-proxy, the request will be routed to a container with the VIRTUAL_HOST env var set.
+Next, start up the *rpi-nginx-proxy* container which will generate the services dynamically:
 
-### Multiple Ports
+```shell
+$ docker run \
+  -p 80:80
+  -v /var/run/docker.sock:/tmp/docker.sock:ro
+  nunofgs/rpi-nginx-proxy
+```
 
-If your container exposes multiple ports, nginx-proxy will default to the service running on port 80.  If you need to specify a different port, you can set a VIRTUAL_PORT env var to select a different one.  If your container only exposes one port and it has a VIRTUAL_HOST env var set, that port will be selected.
+# Thanks
 
-  [1]: https://github.com/jwilder/docker-gen
-  [2]: http://jasonwilder.com/blog/2014/03/25/automated-nginx-reverse-proxy-for-docker/
-  [3]: https://github.com/jwilder/nginx-proxy
-
-### Multiple Hosts
-
-If you need to support multipe virtual hosts for a container, you can separate each enty with commas.  For example, `foo.bar.com,baz.bar.com,bar.com` and each host will be setup the same.
+A special thank you to [nginx-proxy](github.com/jwilder/nginx-proxy) which this project is based on.
