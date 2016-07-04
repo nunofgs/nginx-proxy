@@ -9,6 +9,12 @@ RUN echo "daemon off;" >> /etc/nginx/nginx.conf
 #fix for long server names
 RUN sed -i 's/# server_names_hash_bucket/server_names_hash_bucket/g' /etc/nginx/nginx.conf
 
+# disable server_tokens
+RUN { \
+      echo 'server_tokens off;'; \
+      echo 'client_max_body_size 100m;'; \
+    } > /etc/nginx/conf.d/my_proxy.conf
+
 ENV GOPATH /opt/go
 ENV PATH $PATH:$GOPATH/bin
 ENV VERSION 0.7.3
