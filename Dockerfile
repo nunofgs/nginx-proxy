@@ -29,5 +29,5 @@ WORKDIR /opt/app
 
 EXPOSE 80
 ENV DOCKER_HOST unix:///tmp/docker.sock
-
+ENV NGINX_VERSION=default
 CMD ["forego", "start", "-r"]
